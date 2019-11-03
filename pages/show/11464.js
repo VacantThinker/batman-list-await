@@ -1,18 +1,26 @@
 import WrapLayout from '../../components/WrapLayout'
 import React from 'react'
-
-const show = JSON.parse(
-  `{"name":"Batman Unlimited","summary":"<p>A webseries began airing on DC Kids' YouTube channel on May 4, 2015.</p>","image":{"medium":"http://static.tvmaze.com/uploads/images/medium_portrait/38/96515.jpg","original":"http://static.tvmaze.com/uploads/images/original_untouched/38/96515.jpg"}}`
-)
+import fetch from 'isomorphic-unfetch'
 
 const Post11464 = props => {
+  const { show } = props
   return (
     <WrapLayout>
       <h1>{show.name}</h1>
-      {show.summary}
+      <p>{show.summary.replace(/<[/]?[pb]>/g, '')}</p>
       <img alt="" src={show.image.medium}/>
     </WrapLayout>
   )
+}
+
+Post11464.getInitialProps = async function(context) {
+  const { id } = context.query
+  const res = await fetch(`https://api.tvmaze.com/shows/11464`)
+  const show = await res.json()
+  // const show = shows.get(id)
+  console.log(`Fetched show: Batman Unlimited`)
+
+  return { show }
 }
 
 export default Post11464

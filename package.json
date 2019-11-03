@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "clean-.next": "rmdir /q /s .next",
     "dev": "next dev",
     "build": "next build",
-    "export": "rmdir /q /s .next && next build && next export ",
-    "deploy": "npm run export && type nul > out/.nojekyll && gh-pages -t -d out",
+    "export": "next build && next export && type nul > out/.nojekyll",
+    "deploy": "yarn export && gh-pages -t -d out",
     "start": "next build && next start"
   },
   "dependencies": {

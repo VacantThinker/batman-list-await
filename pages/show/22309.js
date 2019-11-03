@@ -1,18 +1,26 @@
 import WrapLayout from '../../components/WrapLayout'
 import React from 'react'
-
-const show = JSON.parse(
-  `{"name":"Batman: Black and White","summary":"<p>This collection includes animated adaptations of ten short stories, bundled into five episodes, that take place in and around Gotham City, featuring Batman and his nefarious villains. Each story comes from the unique perspective of different writers and artists, applying their spin on the Batman universe.</p>","image":{"medium":"http://static.tvmaze.com/uploads/images/medium_portrait/81/204143.jpg","original":"http://static.tvmaze.com/uploads/images/original_untouched/81/204143.jpg"}}`
-)
+import fetch from 'isomorphic-unfetch'
 
 const Post22309 = props => {
+  const { show } = props
   return (
     <WrapLayout>
       <h1>{show.name}</h1>
-      {show.summary}
+      <p>{show.summary.replace(/<[/]?[pb]>/g, '')}</p>
       <img alt="" src={show.image.medium}/>
     </WrapLayout>
   )
+}
+
+Post22309.getInitialProps = async function(context) {
+  const { id } = context.query
+  const res = await fetch(`https://api.tvmaze.com/shows/22309`)
+  const show = await res.json()
+  // const show = shows.get(id)
+  console.log(`Fetched show: Batman: Black and White`)
+
+  return { show }
 }
 
 export default Post22309

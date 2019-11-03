@@ -1,18 +1,26 @@
 import WrapLayout from '../../components/WrapLayout'
 import React from 'react'
-
-const show = JSON.parse(
-  `{"name":"Batman","summary":"<p>Wealthy entrepreneur Bruce Wayne and his ward Dick Grayson lead a double life: they are actually crime fighting duo Batman and Robin. A secret Batpole in the Wayne mansion leads to the Batcave, where Police Commissioner Gordon often calls with the latest emergency threatening Gotham City. Racing to the scene of the crime in the Batmobile, Batman and Robin must (with the help of their trusty Bat-utility-belt) thwart the efforts of a variety of master criminals, including Catwoman, Egghead, The Joker, King Tut, The Penguin, and The Riddler.</p>","image":{"medium":"http://static.tvmaze.com/uploads/images/medium_portrait/6/16463.jpg","original":"http://static.tvmaze.com/uploads/images/original_untouched/6/16463.jpg"}}`
-)
+import fetch from 'isomorphic-unfetch'
 
 const Post975 = props => {
+  const { show } = props
   return (
     <WrapLayout>
       <h1>{show.name}</h1>
-      {show.summary}
+      <p>{show.summary.replace(/<[/]?[pb]>/g, '')}</p>
       <img alt="" src={show.image.medium}/>
     </WrapLayout>
   )
+}
+
+Post975.getInitialProps = async function(context) {
+  const { id } = context.query
+  const res = await fetch(`https://api.tvmaze.com/shows/975`)
+  const show = await res.json()
+  // const show = shows.get(id)
+  console.log(`Fetched show: Batman`)
+
+  return { show }
 }
 
 export default Post975

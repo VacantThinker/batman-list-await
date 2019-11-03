@@ -1,20 +1,15 @@
 const env = require('./env.config')
 
 module.exports = {
-  'presets': [
+  presets: [
     [
       'next/babel',
       {
         'preset-env': {
-          'modules': 'commonjs'
+          modules: 'commonjs'
         }
       }
     ]
   ],
-  'plugins': [
-    [
-      'transform-define',
-      env
-    ]
-  ]
+  plugins: [['transform-define', env]]
 }

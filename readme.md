@@ -117,4 +117,10 @@ export default PrefixedImg
 ```
 
 ---
+
+ - export default XXXName
+    
+    - 不允许重名
+
+---
 end

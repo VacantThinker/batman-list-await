@@ -10,12 +10,11 @@ const hostUrl = '/batman-list-await'
 const filePath = path.join(__dirname, '../_data/batman.json')
 const fileSync = fs.readFileSync(filePath, 'utf8')
 const jsonObj = JSON.parse(fileSync)
-
-const showList = jsonObj.map(x => x.show)
+const shows = jsonObj.map(x => x.show)
 
 function g_indexjs_ul_li() {
   let strToFile = ''
-  showList.forEach(show => {
+  shows.forEach(show => {
     const dirName = '/show/'
     const templateLi = `<li key={\`${show.id}\`}>
   <PrefixedLink href={\`${dirName}${show.id}\`}>
@@ -36,7 +35,7 @@ function g_indexjs_ul_li() {
 
 function g_nextconfigjs_pathmap_showid() {
   let strToFile = ''
-  showList.forEach(val => {
+  shows.forEach(val => {
     const dirName = '/show/'
     const page1 = `${dirName}${val.id}`
     const templateLi = `'${page1}' : {page : '${page1}'},
@@ -53,28 +52,51 @@ function g_nextconfigjs_pathmap_showid() {
 }
 
 function g_showdir_idjs() {
-  showList.forEach(val => {
-    const id = val.id
-    const htmlImgUrl = `/static/${id}.jpg`
+  shows.forEach(show => {
+    const id = show.id
+    const name = show.name
+    const summary = show.summary
+    // const htmlImgUrl = `/static/${id}.jpg`
 
-    const templatePost = `import WrapLayout from "../../components/WrapLayout"
+    const templatePost = `
+import WrapLayout from "../../components/WrapLayout"
 import PrefixedImg from "../../components/PrefixedImg"
 import React from "react"
+import fetch from 'isomorphic-unfetch'
 
-const Post${val.id} = () => (
-  <WrapLayout>
-    <h1>${val.name}</h1>
-    ${val.summary}
-    <PrefixedImg alt='' src={\`${htmlImgUrl}\`} />
-  </WrapLayout>
-)
+const Post${id} = (props) => {
+  const {show} = props
+  return (
+    <WrapLayout>
+      <h1>{show.name}</h1>
+      <p>{show.summary.replace(/<[/]?[pb]>/g, '')}</p>
+      <img alt="" src={show.image.medium}/>
+    </WrapLayout>
+  )
+}
 
-export default Post${val.id}
+Post${id}.getInitialProps = async function(context) {
+  const { id } = context.query
+  const res = await fetch(\`https://api.tvmaze.com/shows/${id}\`)
+  const showData = await res.json()
+  // const show = shows.get(id)
+  const show = {}
+  show.name = showData.name
+  show.summary = showData.summary
+  show.image = showData.image
+  
+  console.log(\`Fetched show: ${show.name}\`)
+
+  return { show }
+}
+
+
+export default Post${id}
 `
 
     // console.log(templatePost)
     fs.writeFileSync(
-      path.join(__dirname, `../_temp/${id}.js`),
+      path.join(__dirname, `../pages/show/${id}.js`),
       templatePost,
       'utf8'
     )
@@ -82,8 +104,10 @@ export default Post${val.id}
   console.log(`g_showdir_idjs end ---`)
 }
 
+g_showdir_idjs()
+
 function g_showdir_idjs_image() {
-  showList.map(val => {
+  shows.map(val => {
     // get image file
     const imgId = val.id
     const imgUrl = val.image.medium
@@ -106,56 +130,32 @@ function g_showdir_idjs_image() {
   })
 }
 
-async function g_showdir_idjs() {
-  const url = 'https://api.tvmaze.com/search/shows?q=batman'
-  const res = await fetch(url)
-  const data = await res.json()
-  const shows = data.map(entry => entry.show)
-
-  shows.forEach(show => {
-    // console.log(show)
-    const show_new = {}
-    show_new.name = show.name
-    show_new.summary = show.summary
-    show_new.image = show.image
-    const showStr = JSON.stringify(show_new)
-    const id = show.id
-    // console.log(id)
-
-    const templatePost = `
-import WrapLayout from '../../components/WrapLayout'
-import PrefixedImg from '../../components/PrefixedImg'
-import React from 'react'
-import fetch from 'isomorphic-unfetch'
-
-const show = JSON.parse(\`${showStr}\`)
-
-const Post${id} = (props) => {
-  return (
-    <WrapLayout>
-      <h1>{show.name}</h1>
-      {show.summary}
-      <img alt="" src={show.image.medium} />
-    </WrapLayout>
-  )
-}
-
-export default Post${id}
-
-  `
-    const filePath = path.join(__dirname, `../pages/show/${show.id}.js`)
-    console.log(filePath)
-    const existsSync = fs.existsSync(filePath)
-    if (existsSync) {
-      fs.unlinkSync(filePath)
-    }
-    fs.writeFileSync(filePath, templatePost, 'utf8')
-    // fs.writeFile(filePath, templatePost, err => {})
-  })
-}
-
 // g_indexjs_ul_li()
 // g_nextconfigjs_pathmap_showid()
-// g_showdir_idjs()
 // g_showdir_idjs_image()
-g_showdir_idjs()
+
+//
+// function g_showdir_post_data_map() {
+//
+//   const showArr = new Map()
+//   shows.map((show, index) => {
+//       const id = show.id
+//       const name = `\`${show.name}\``
+//       const summary = `\`${show.summary}\``
+//     const image = show.image
+//
+//       const showItem = {
+//         name: name,
+//         summary: summary,
+//         image: image
+//       }
+//       showArr.set(`${show.id}`, showItem)
+//
+//     }
+//   )
+//   console.log(showArr)
+//
+//   const f = path.join(__dirname, `../_temp/showdir_post_data.json`)
+//   fs.writeFileSync(f, JSON.stringify([...showArr]), 'utf8')
+// }
+// g_showdir_post_data_map()
