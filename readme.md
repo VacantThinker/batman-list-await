@@ -3,10 +3,8 @@
 
  - 部署实例
     
-    - https://vacantthinker.github.io/batman-list/
-        - host '/batman-list'
-    - https://batman-list.littlehappyforsmile.now.sh/
-        - host ''
+    - https://vacantthinker.github.io/batman-list-await/
+        - host '/batman-list-await'
 
 ---
 

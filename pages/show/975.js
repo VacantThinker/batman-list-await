@@ -1,8 +1,9 @@
 import WrapLayout from '../../components/WrapLayout'
 import React from 'react'
-import fetch from 'isomorphic-unfetch'
 
-const Post975 = props => {
+const axios = require('axios')
+
+const Post975 = (props) => {
   const { show } = props
   return (
     <WrapLayout>
@@ -15,12 +16,16 @@ const Post975 = props => {
 
 Post975.getInitialProps = async function(context) {
   const { id } = context.query
-  const res = await fetch(`https://api.tvmaze.com/shows/975`)
-  const show = await res.json()
-  // const show = shows.get(id)
+  const url = `https://api.tvmaze.com/shows/975`
+  const res = await axios.get(url)
+//  console.log(res)
+  const show = res.data
+  // console.log(data)
+
   console.log(`Fetched show: Batman`)
 
   return { show }
 }
+
 
 export default Post975

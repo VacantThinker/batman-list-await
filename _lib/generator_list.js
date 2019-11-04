@@ -3,10 +3,6 @@ const path = require('path')
 const axios = require('axios').default
 const fetch = require('isomorphic-unfetch')
 
-const production = process.env.NODE_ENV === 'production'
-const hostUrl = '/batman-list-await'
-// const hostUrl = '';
-
 const filePath = path.join(__dirname, '../_data/batman.json')
 const fileSync = fs.readFileSync(filePath, 'utf8')
 const jsonObj = JSON.parse(fileSync)
@@ -64,6 +60,8 @@ import PrefixedImg from "../../components/PrefixedImg"
 import React from "react"
 import fetch from 'isomorphic-unfetch'
 
+const axios = require('axios')
+
 const Post${id} = (props) => {
   const {show} = props
   return (
@@ -77,14 +75,12 @@ const Post${id} = (props) => {
 
 Post${id}.getInitialProps = async function(context) {
   const { id } = context.query
-  const res = await fetch(\`https://api.tvmaze.com/shows/${id}\`)
-  const showData = await res.json()
-  // const show = shows.get(id)
-  const show = {}
-  show.name = showData.name
-  show.summary = showData.summary
-  show.image = showData.image
-  
+  const url = \`https://api.tvmaze.com/shows/${id}\`
+  const res = await axios.get(url)
+//  console.log(res)
+  const show = res.data
+  // console.log(data)
+
   console.log(\`Fetched show: ${show.name}\`)
 
   return { show }
@@ -103,7 +99,6 @@ export default Post${id}
   })
   console.log(`g_showdir_idjs end ---`)
 }
-
 g_showdir_idjs()
 
 function g_showdir_idjs_image() {
